@@ -1,9 +1,12 @@
-import streamlit as st
+
+from llama_index.llms.openai import OpenAI
+
+from llama_index.core.readers.base import BaseReader
+from llama_index.readers.microsoft_sharepoint import SharePointReader
+from llama_index.core import VectorStoreIndex,ServiceContext,Document,SimpleDirectoryReader
 import openai
 import os
-from llama_index.llms.openai import OpenAI
-from llama_index.core import VectorStoreIndex,ServiceContext,Document,SimpleDirectoryReader
-from llama_index.reader.microsoft_sharepoint import SharePointReader
+import streamlit as st
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -20,8 +23,28 @@ if "messages" not in st.session_state.keys():
 @st.cache_resource(show_spinner=False)
 def load_data():
     with st.spinner(text='loading and indexing data'):
-        reader = SimpleDirectoryReader('data')
-        docs = reader.load_data()        
+        print("enter the loader")
+        print({
+    "client_id":os.getenv('client_id'),
+    "client_secret":os.getenv('client_secret'),
+    "tenant_id":os.getenv('tenant_id')})
+        loader = SharePointReader(
+    client_id=os.getenv('client_id'),
+    client_secret=os.getenv('client_secret'),
+    tenant_id=os.getenv('tenant_id'),
+        sharepoint_site_name="sharepointsite",
+        sharepoint_folder_path="internal_folder")
+        print(f"loader : {loader}")
+        try:
+            docs = loader.load_data(
+        sharepoint_site_name="sharepointsite",
+        sharepoint_folder_path="internal_folder",
+        recursive=True)
+        except Exception as e:
+            print(e)
+        # reader = SimpleDirectoryReader('data')
+        # docs = reader.load_data()  
+        print(docs)      
         index = VectorStoreIndex.from_documents(docs,show_progress=True)
         return index
     
