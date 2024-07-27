@@ -129,7 +129,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
-envLoc
+latst_env
 env3/
 
 # Spyder project settings
