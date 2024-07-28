@@ -1,23 +1,48 @@
-# SharePoint-Powered Chatbot
+# Builded end-to-end chatbot with SharePoint (Custom data) sources, powered by LlamaIndex & OpenAI API
+![Chatbot using LLM & RAG (SharePoint- knowledge base)](rag-with-llamaindex-1.png)
+## Setup and Installation
 
-A chatbot application built with Streamlit and LlamaIndex, leveraging knowledge from SharePoint.
+1. Clone the repository
+2. Install dependencies: `pip install -r requirements.txt`
+3. Set up environment variables for SharePoint and OpenAI API credentials. For more details on sharepoint setup please refer (https://llamahub.ai/l/readers/llama-index-readers-microsoft-sharepoint?from=)
+4. Run the application: `streamlit run streamlit_app.py`
 
-## Overview
+## Usage
 
-This project demonstrates the creation of an intelligent chatbot that utilizes a knowledge base stored in SharePoint. The chatbot is built using Streamlit for the user interface and LlamaIndex for efficient information retrieval and natural language processing.
+1. Launch the Streamlit app
+2. Enter your query in the chat interface
+3. Receive AI-generated responses based on the SharePoint knowledge base
 
-## Features
+## Development Process
 
-- Interactive chat interface powered by Streamlit
-- Knowledge base integration with SharePoint
-- Intelligent querying and response generation using LlamaIndex
-- Easy-to-use and deploy
+1. **SharePoint Integration**: Implemented a custom connector to fetch and update data from SharePoint lists and document libraries.
+2. **Data Indexing**: Utilized LlamaIndex to create an efficient search index of the SharePoint data.
+3. **OpenAI Integration**: Integrated OpenAI's API to generate contextually relevant responses.
+4. **Streamlit UI Development**: Designed and implemented an intuitive user interface using Streamlit.
+5. **Testing and Optimization**: Conducted thorough testing and performance optimization to ensure smooth user experience.
 
-## Technologies Used
+## Future Enhancements
 
-- Python
-- Streamlit
-- LlamaIndex
-- SharePoint API
-- OpenAI API
+- Implement user authentication
+- Add support for multiple SharePoint sites
+- Enhance the chatbot with multi-turn conversation capabilities
+- Implement a feedback mechanism for continuous improvement
 
+## Contributing
+
+Contributions, issues, and feature requests are welcome. Feel free to check [issues page](https://github.com/sharad28/Chatbot_streamlit_llamaindex/issues) if you want to contribute.
+
+## License
+
+[MIT](https://choosealicense.com/licenses/mit/)
+
+## Contact
+
+Sarad Mishra - [saradmishra28@gmail.com]
+
+LinkedIn Link: [https://www.linkedin.com/in/sharad-mishra-1568b566/](https://www.linkedin.com/in/sharad-mishra-1568b566/)
+
+
+
+reference : 
+1. (https://blog.streamlit.io/build-a-chatbot-with-custom-data-sources-powered-by-llamaindex/)
