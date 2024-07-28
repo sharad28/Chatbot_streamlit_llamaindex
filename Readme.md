@@ -25,8 +25,8 @@
 
 - Implement user authentication
 - Add support for multiple SharePoint sites
-- Enhance the chatbot with multi-turn conversation capabilities
 - Implement a feedback mechanism for continuous improvement
+- Implement multi-model
 
 ## Contributing
 
