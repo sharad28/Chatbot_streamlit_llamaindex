@@ -2,54 +2,61 @@
 from llama_index.llms.openai import OpenAI
 from llama_index.core.readers.base import BaseReader
 from llama_index.readers.microsoft_sharepoint import SharePointReader
-from llama_index.core import VectorStoreIndex,ServiceContext,Document,SimpleDirectoryReader
+from llama_index.core import VectorStoreIndex,ServiceContext,Document,SimpleDirectoryReader,StorageContext, load_index_from_storage
 import openai
 import os
 import streamlit as st
+
 from dotenv import load_dotenv
 load_dotenv()
 sharepoint_site_name="sharepointsite"
-st.set_page_config(page_title="Chat with SharePoint data",layout="centered", initial_sidebar_state="auto", menu_items=None)
+
+st.set_page_config(page_title="Chat with Custom data",layout="centered", initial_sidebar_state="auto", menu_items=None)
 openai.api_key = os.getenv('OPENAI_API_KEY')
 st.title(f"Chat with SharePoint data")
-st.info(f"SharePoint site {sharepoint_site_name}")
+st.info(f"Custom data received from SharePoint site name: {sharepoint_site_name}")
+
+def save_index(index, directory="./saved_index"):
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+    index.storage_context.persist(persist_dir=directory)
 
 if "messages" not in st.session_state.keys():
     st.session_state.messages=[
-        {"role": "assistant", "content": "Ask me a question about Streamlit's open-source Python library!"}
+        {"role": "assistant", "content": "Ask me a question from Knowledge base (custom data: SharePoint site)!"}
     ]
 
 @st.cache_resource(show_spinner=False)
 def load_data():
-    with st.spinner(text='loading and indexing data'):
-        # print("enter the loader")
-        # print({
-    # "client_id":os.getenv('client_id'),
-    # "client_secret":os.getenv('client_secret'),
-    # "tenant_id":os.getenv('tenant_id')})
-        loader = SharePointReader(
-    client_id=os.getenv('client_id'),
-    client_secret=os.getenv('client_secret'),
-    tenant_id=os.getenv('tenant_id'),
-        # sharepoint_site_name="sharepointsite",
-        # sharepoint_folder_path="internal_folder"
-        )
-        # print(f"loader : {loader}")
-        try:
-            
-            docs = loader.load_data(
-        sharepoint_site_name="sharepointsite",
-        sharepoint_folder_path="internal_folder",
-        recursive=True
-        )
-        except Exception as e:
-            print(e)
-        # reader = SimpleDirectoryReader('data')
-        # docs = reader.load_data()  
-        # print(docs)      
-        index = VectorStoreIndex.from_documents(docs,show_progress=True)
-        return index
+    index_directory = "./saved_index"
     
+    if os.path.exists(index_directory):
+        with st.spinner(text='Loading saved index...'):
+            storage_context = StorageContext.from_defaults(persist_dir=index_directory)
+            index = load_index_from_storage(storage_context)
+    else:
+        with st.spinner(text='Loading and indexing data...'):
+            loader = SharePointReader(
+                client_id=os.getenv('client_id'),
+                client_secret=os.getenv('client_secret'),
+                tenant_id=os.getenv('tenant_id'),
+            )
+
+            try:
+                docs = loader.load_data(
+                    sharepoint_site_name="sharepointsite",
+                    sharepoint_folder_path="internal_folder",
+                    recursive=True
+                )
+            except Exception as e:
+                print(e)
+                return None
+
+            index = VectorStoreIndex.from_documents(docs, show_progress=True)
+            save_index(index)
+    
+    return index
+
 index = load_data()
 
 if 'chat_engine' not in st.session_state.keys():
